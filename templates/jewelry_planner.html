@@ -1,0 +1,159 @@
+{% extends "base.html" %} {% block title %} Jewelry Planner - PocketSmart AI {%
+endblock %} {% block content %}
+
+<section class="page">
+  <div class="container">
+    <div class="page-title center">
+      <h1>💎 Jewelry Planner</h1>
+
+      <p>Get jewelry suggestions based on your budget and preferences.</p>
+    </div>
+
+    <div class="form-card">
+      <form id="jewelryForm" enctype="multipart/form-data">
+        <div class="grid-2">
+          <div class="form-group">
+            <label> Budget ₹ </label>
+
+            <input
+              name="budget"
+              type="number"
+              min="1"
+              required
+              placeholder="3000"
+            />
+          </div>
+
+          <div class="form-group">
+            <label> Occasion </label>
+
+            <select name="occasion">
+              <option>Casual</option>
+
+              <option>College</option>
+
+              <option>Party</option>
+
+              <option>Wedding</option>
+
+              <option>Formal</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label> Jewelry Type </label>
+
+            <select name="jewelry_type">
+              <option>Necklace</option>
+
+              <option>Earrings</option>
+
+              <option>Bracelet</option>
+
+              <option>Ring</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label> Metal </label>
+
+            <select name="metal">
+              <option>Any</option>
+
+              <option>Gold</option>
+
+              <option>Silver</option>
+
+              <option>Rose Gold</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label> Style </label>
+
+            <select name="style">
+              <option>Minimal</option>
+
+              <option>Traditional</option>
+
+              <option>Statement</option>
+
+              <option>Elegant</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label> Outfit Color </label>
+
+            <input
+              name="outfit_color"
+              value="Any"
+              placeholder="Black, blue, wine..."
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label> Optional Outfit Image </label>
+
+          <input
+            name="image"
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+          />
+        </div>
+
+        <button type="submit" class="button">Generate Jewelry Plan</button>
+
+        <div id="loading" class="loading">Creating recommendations...</div>
+      </form>
+    </div>
+
+    <div id="result" class="result"></div>
+  </div>
+</section>
+
+{% endblock %} {% block scripts %}
+
+<script>
+  document
+    .getElementById("jewelryForm")
+    .addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const form = document.getElementById("jewelryForm");
+
+      const loading = document.getElementById("loading");
+
+      const result = document.getElementById("result");
+
+      showLoading(loading, true);
+
+      result.innerHTML = "";
+
+      try {
+        const formData = new FormData(form);
+
+        const data = await apiFetch("/api/generate-jewelry", {
+          method: "POST",
+          body: formData,
+        });
+
+        renderRecommendation(result, data);
+      } catch (error) {
+        result.innerHTML = `
+                    <div class="alert error">
+                        ${escapeHtml(error.message)}
+                    </div>
+                `;
+      } finally {
+        showLoading(loading, false);
+      }
+    });
+</script>
+
+{% endblock %}

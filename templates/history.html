@@ -1,0 +1,95 @@
+{% extends "base.html" %} {% block title %} History - PocketSmart AI {% endblock
+%} {% block content %}
+
+<section class="page">
+  <div class="container">
+    <div class="page-title">
+      <h1>Recommendation History</h1>
+
+      <p>Your previous PocketSmart recommendations.</p>
+    </div>
+
+    <div id="historyContainer">Loading...</div>
+  </div>
+</section>
+
+{% endblock %} {% block scripts %}
+
+<script>
+  async function loadHistory() {
+    const container = document.getElementById("historyContainer");
+
+    try {
+      const history = await apiFetch("/api/history");
+
+      if (!history.length) {
+        container.innerHTML = `
+                <div class="card center">
+
+                    <h3>
+                        No recommendations yet
+                    </h3>
+
+                    <p>
+                        Start using one of the
+                        planners to create your
+                        first recommendation.
+                    </p>
+
+                    <a
+                        href="/dashboard"
+                        class="button"
+                    >
+                        Open Dashboard
+                    </a>
+
+                </div>
+            `;
+
+        return;
+      }
+
+      container.innerHTML = history
+        .map(
+          (item) => `
+                    <div class="history-item">
+
+                        <div>
+
+                            <h3>
+                                ${escapeHtml(item.title)}
+                            </h3>
+
+                            <p class="muted">
+                                ${escapeHtml(item.planner_type)}
+                                ·
+                                ${new Date(item.created_at).toLocaleString()}
+                            </p>
+
+                        </div>
+
+
+                        <a
+                            href="/recommendation/${item.id}"
+                            class="button"
+                        >
+                            View
+                        </a>
+
+                    </div>
+                `,
+        )
+        .join("");
+    } catch (error) {
+      container.innerHTML = `
+            <div class="alert error">
+                ${escapeHtml(error.message)}
+            </div>
+        `;
+    }
+  }
+
+  loadHistory();
+</script>
+
+{% endblock %}

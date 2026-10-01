@@ -1,0 +1,89 @@
+{% extends "base.html" %} {% block title %} PocketSmart AI {% endblock %} {%
+block content %}
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <h1>
+        Plan smarter.
+        <span>Spend better.</span>
+      </h1>
+
+      <p>
+        PocketSmart AI helps you create practical budget plans for your home,
+        parties and jewelry shopping.
+      </p>
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap">
+        <a href="/dashboard" class="button"> Start Planning </a>
+
+        <a href="/register" class="button secondary"> Create Account </a>
+      </div>
+    </div>
+
+    <div class="hero-card">
+      <h2>AI-powered planning</h2>
+
+      <p>
+        Tell PocketSmart AI your budget and preferences. Get organized,
+        budget-conscious recommendations.
+      </p>
+
+      <ul>
+        <li>Home planning</li>
+
+        <li>Party planning</li>
+
+        <li>Jewelry recommendations</li>
+
+        <li>Recommendation history</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-title">
+      <h2>What can you plan?</h2>
+
+      <p>Choose a planner and enter your requirements.</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>🏠 Home Planner</h3>
+
+        <p>
+          Create a budget-conscious home setup plan based on your space and
+          preferred style.
+        </p>
+
+        <a href="/planner/home" class="button"> Plan Home </a>
+      </div>
+
+      <div class="card">
+        <h3>🎉 Party Planner</h3>
+
+        <p>
+          Plan decorations, food and other party requirements within your
+          budget.
+        </p>
+
+        <a href="/planner/party" class="button"> Plan Party </a>
+      </div>
+
+      <div class="card">
+        <h3>💎 Jewelry Planner</h3>
+
+        <p>
+          Get jewelry suggestions based on occasion, style, metal and budget.
+        </p>
+
+        <a href="/planner/jewelry" class="button"> Plan Jewelry </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

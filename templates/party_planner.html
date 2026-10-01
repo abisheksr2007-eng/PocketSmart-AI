@@ -1,0 +1,156 @@
+{% extends "base.html" %} {% block title %} Party Planner - PocketSmart AI {%
+endblock %} {% block content %}
+
+<section class="page">
+  <div class="container">
+    <div class="page-title center">
+      <h1>🎉 Party Planner</h1>
+
+      <p>Organize your party without losing control of your budget.</p>
+    </div>
+
+    <div class="form-card">
+      <form id="partyForm">
+        <div class="grid-2">
+          <div class="form-group">
+            <label> Budget ₹ </label>
+
+            <input
+              id="budget"
+              type="number"
+              min="1"
+              required
+              placeholder="10000"
+            />
+          </div>
+
+          <div class="form-group">
+            <label> Location </label>
+
+            <input id="location" value="India" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label> Occasion </label>
+
+            <select id="occasion">
+              <option>Birthday</option>
+
+              <option>Anniversary</option>
+
+              <option>Graduation</option>
+
+              <option>Get Together</option>
+
+              <option>Festival</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label> Guests </label>
+
+            <input id="guests" type="number" min="1" value="10" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label> Food Preference </label>
+
+            <select id="food_preference">
+              <option>Mixed</option>
+
+              <option>Vegetarian</option>
+
+              <option>Vegan</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label> Venue </label>
+
+            <select id="venue_preference">
+              <option>Home</option>
+
+              <option>Restaurant</option>
+
+              <option>Hall</option>
+
+              <option>Outdoor</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label> Theme </label>
+
+          <input
+            id="theme"
+            value="Simple"
+            placeholder="Simple, floral, elegant..."
+          />
+        </div>
+
+        <button type="submit" class="button">Generate Party Plan</button>
+
+        <div id="loading" class="loading">Creating your party plan...</div>
+      </form>
+    </div>
+
+    <div id="result" class="result"></div>
+  </div>
+</section>
+
+{% endblock %} {% block scripts %}
+
+<script>
+  document
+    .getElementById("partyForm")
+    .addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const loading = document.getElementById("loading");
+
+      const result = document.getElementById("result");
+
+      showLoading(loading, true);
+
+      result.innerHTML = "";
+
+      try {
+        const data = await apiFetch("/api/generate-party", {
+          method: "POST",
+
+          body: JSON.stringify({
+            budget: Number(document.getElementById("budget").value),
+
+            location: document.getElementById("location").value,
+
+            occasion: document.getElementById("occasion").value,
+
+            guests: Number(document.getElementById("guests").value),
+
+            food_preference: document.getElementById("food_preference").value,
+
+            venue_preference: document.getElementById("venue_preference").value,
+
+            theme: document.getElementById("theme").value,
+          }),
+        });
+
+        renderRecommendation(result, data);
+      } catch (error) {
+        result.innerHTML = `
+                    <div class="alert error">
+                        ${escapeHtml(error.message)}
+                    </div>
+                `;
+      } finally {
+        showLoading(loading, false);
+      }
+    });
+</script>
+
+{% endblock %}

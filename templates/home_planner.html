@@ -1,0 +1,142 @@
+{% extends "base.html" %} {% block title %} Home Planner - PocketSmart AI {%
+endblock %} {% block content %}
+
+<section class="page">
+  <div class="container">
+    <div class="page-title center">
+      <h1>🏠 Home Planner</h1>
+
+      <p>Create a practical home plan around your budget.</p>
+    </div>
+
+    <div class="form-card">
+      <form id="homeForm">
+        <div class="grid-2">
+          <div class="form-group">
+            <label> Budget ₹ </label>
+
+            <input
+              id="budget"
+              type="number"
+              min="1"
+              required
+              placeholder="50000"
+            />
+          </div>
+
+          <div class="form-group">
+            <label> Location </label>
+
+            <input id="location" value="India" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label> Home Type </label>
+
+            <select id="home_type">
+              <option>Apartment</option>
+
+              <option>House</option>
+
+              <option>Studio</option>
+
+              <option>Hostel Room</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label> Number of Rooms </label>
+
+            <input id="rooms" type="number" min="1" max="10" value="2" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label> Style </label>
+
+          <select id="style">
+            <option>Modern</option>
+
+            <option>Minimal</option>
+
+            <option>Traditional</option>
+
+            <option>Scandinavian</option>
+
+            <option>Boho</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label> Priorities </label>
+
+          <input id="priorities" placeholder="storage, lighting, study table" />
+        </div>
+
+        <button type="submit" class="button">Generate Home Plan</button>
+
+        <div id="loading" class="loading">Creating your plan...</div>
+      </form>
+    </div>
+
+    <div id="result" class="result"></div>
+  </div>
+</section>
+
+{% endblock %} {% block scripts %}
+
+<script>
+  document
+    .getElementById("homeForm")
+    .addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const loading = document.getElementById("loading");
+
+      const result = document.getElementById("result");
+
+      showLoading(loading, true);
+
+      result.innerHTML = "";
+
+      try {
+        const priorities = document
+          .getElementById("priorities")
+          .value.split(",")
+          .map((value) => value.trim())
+          .filter(Boolean);
+
+        const data = await apiFetch("/api/generate-home", {
+          method: "POST",
+
+          body: JSON.stringify({
+            budget: Number(document.getElementById("budget").value),
+
+            location: document.getElementById("location").value,
+
+            home_type: document.getElementById("home_type").value,
+
+            rooms: Number(document.getElementById("rooms").value),
+
+            style: document.getElementById("style").value,
+
+            priorities,
+          }),
+        });
+
+        renderRecommendation(result, data);
+      } catch (error) {
+        result.innerHTML = `
+                    <div class="alert error">
+                        ${escapeHtml(error.message)}
+                    </div>
+                `;
+      } finally {
+        showLoading(loading, false);
+      }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block title %} Recommendation - PocketSmart AI {%
+endblock %} {% block content %}
+
+<section class="page">
+  <div class="container">
+    <div class="page-title">
+      <h1>Recommendation</h1>
+
+      <p>Your PocketSmart AI result.</p>
+    </div>
+
+    <div id="result">Loading recommendation...</div>
+  </div>
+</section>
+
+{% endblock %} {% block scripts %}
+
+<script>
+  async function loadRecommendation() {
+    const container = document.getElementById("result");
+
+    try {
+      const result = await apiFetch(
+        "/api/recommendations-details/{{ recommendation_id }}",
+      );
+
+      renderRecommendation(container, result);
+    } catch (error) {
+      container.innerHTML = `
+            <div class="alert error">
+                ${escapeHtml(error.message)}
+            </div>
+        `;
+    }
+  }
+
+  loadRecommendation();
+</script>
+
+{% endblock %}

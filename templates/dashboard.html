@@ -1,0 +1,101 @@
+{% extends "base.html" %} {% block title %} Dashboard - PocketSmart AI {%
+endblock %} {% block content %}
+
+<section class="page">
+  <div class="container">
+    <div class="page-title">
+      <h1>Your Dashboard</h1>
+
+      <p>Choose what you want to plan.</p>
+    </div>
+
+    <div id="userBox" class="card" style="margin-bottom: 25px">
+      Loading account...
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>🏠 Home Planner</h3>
+
+        <p>Plan furniture and decoration within your budget.</p>
+
+        <a href="/planner/home" class="button"> Open Planner </a>
+      </div>
+
+      <div class="card">
+        <h3>🎉 Party Planner</h3>
+
+        <p>Build a complete party plan according to your budget.</p>
+
+        <a href="/planner/party" class="button"> Open Planner </a>
+      </div>
+
+      <div class="card">
+        <h3>💎 Jewelry Planner</h3>
+
+        <p>Find budget-conscious jewelry recommendations.</p>
+
+        <a href="/planner/jewelry" class="button"> Open Planner </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %} {% block scripts %}
+
+<script>
+  async function loadUser() {
+    const box = document.getElementById("userBox");
+
+    try {
+      const data = await apiFetch("/api/session-info");
+
+      if (!data.authenticated) {
+        box.innerHTML = `
+                <h3>Guest Mode</h3>
+
+                <p>
+                    You can use the planners
+                    without an account, but
+                    login is required to save
+                    and view your history.
+                </p>
+
+                <a
+                    href="/login"
+                    class="button"
+                >
+                    Login
+                </a>
+            `;
+
+        return;
+      }
+
+      box.innerHTML = `
+            <h3>
+                Hello, ${escapeHtml(data.user.name)}!
+            </h3>
+
+            <p>
+                ${escapeHtml(data.user.email)}
+            </p>
+
+            <button
+                class="button danger"
+                data-logout
+            >
+                Logout
+            </button>
+        `;
+
+      box.querySelector("[data-logout]").addEventListener("click", logoutUser);
+    } catch (error) {
+      box.textContent = error.message;
+    }
+  }
+
+  loadUser();
+</script>
+
+{% endblock %}
